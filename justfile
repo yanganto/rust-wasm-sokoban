@@ -1,6 +1,8 @@
 #!/usr/bin/env just --justfile
+resource:
+	tar -cvf resources.tar resources
 
-web-build:
+web-build: 
 	cargo build --target wasm32-unknown-unknown --release
 
 web: web-build
@@ -11,6 +13,7 @@ desktop:
 	cargo run 
 
 clean:
+	cargo clean
 	rm -rf rust-wasm-sokoban.wasm
 
 # Local Variables:

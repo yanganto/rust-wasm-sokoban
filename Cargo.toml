@@ -8,3 +8,5 @@ edition = "2018"
 log = "0.4"
 env_logger = "0.7"
 gwg = { git = "https://github.com/not-fl3/good-web-game", package = "good-web-game" }
+specs = { version = "0.15.0", features = ["specs-derive"] }
+nalgebra = { version = "0.19", features = ["mint"] }
