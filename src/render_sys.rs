@@ -34,11 +34,11 @@ pub struct Player {}
 
 #[derive(Component)]
 #[storage(VecStorage)]
-pub struct Box {}
+pub struct GameBox {}
 
 #[derive(Component)]
 #[storage(VecStorage)]
-pub struct BoxSpot {}
+pub struct GameBoxSpot {}
 
 // Systems
 pub struct RenderingSystem<'a> {
@@ -86,8 +86,8 @@ pub fn register_components(world: &mut World) {
     world.register::<Renderable>();
     world.register::<Player>();
     world.register::<Wall>();
-    world.register::<Box>();
-    world.register::<BoxSpot>();
+    world.register::<GameBox>();
+    world.register::<GameBoxSpot>();
 }
 
 // Create a wall entity
@@ -119,7 +119,7 @@ pub fn create_box(world: &mut World, position: Position) {
         .with(Renderable {
             path: "/resources/images/box.png".to_string(),
         })
-        .with(Box {})
+        .with(GameBox {})
         .build();
 }
 
@@ -130,7 +130,7 @@ pub fn create_box_spot(world: &mut World, position: Position) {
         .with(Renderable {
             path: "/resources/images/box_spot.png".to_string(),
         })
-        .with(BoxSpot {})
+        .with(GameBoxSpot {})
         .build();
 }
 
