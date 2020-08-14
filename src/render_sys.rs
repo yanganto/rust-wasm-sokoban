@@ -1,3 +1,4 @@
+use crate::components::{Position, Renderable};
 use gwg::{
     graphics::{self, DrawParam, Image},
     Context,
@@ -8,37 +9,6 @@ use specs::{
 };
 
 const TILE_WIDTH: f32 = 32.0;
-
-// Components
-#[derive(Debug, Component, Clone, Copy)]
-#[storage(VecStorage)]
-pub struct Position {
-    x: u8,
-    y: u8,
-    z: u8,
-}
-
-#[derive(Component)]
-#[storage(VecStorage)]
-pub struct Renderable {
-    path: String,
-}
-
-#[derive(Component)]
-#[storage(VecStorage)]
-pub struct Wall {}
-
-#[derive(Component)]
-#[storage(VecStorage)]
-pub struct Player {}
-
-#[derive(Component)]
-#[storage(VecStorage)]
-pub struct GameBox {}
-
-#[derive(Component)]
-#[storage(VecStorage)]
-pub struct GameBoxSpot {}
 
 // Systems
 pub struct RenderingSystem<'a> {
@@ -80,95 +50,19 @@ impl<'a> System<'a> for RenderingSystem<'a> {
     }
 }
 
-// Register components with the world
-pub fn register_components(world: &mut World) {
-    world.register::<Position>();
-    world.register::<Renderable>();
-    world.register::<Player>();
-    world.register::<Wall>();
-    world.register::<GameBox>();
-    world.register::<GameBoxSpot>();
-}
-
-// Create a wall entity
-pub fn create_wall(world: &mut World, position: Position) {
-    world
-        .create_entity()
-        .with(Position { z: 10, ..position })
-        .with(Renderable {
-            path: "/resources/images/wall.png".to_string(),
-        })
-        .with(Wall {})
-        .build();
-}
-
-pub fn create_floor(world: &mut World, position: Position) {
-    world
-        .create_entity()
-        .with(Position { z: 5, ..position })
-        .with(Renderable {
-            path: "/resources/images/floor.png".to_string(),
-        })
-        .build();
-}
-
-pub fn create_box(world: &mut World, position: Position) {
-    world
-        .create_entity()
-        .with(Position { z: 10, ..position })
-        .with(Renderable {
-            path: "/resources/images/box.png".to_string(),
-        })
-        .with(GameBox {})
-        .build();
-}
-
-pub fn create_box_spot(world: &mut World, position: Position) {
-    world
-        .create_entity()
-        .with(Position { z: 9, ..position })
-        .with(Renderable {
-            path: "/resources/images/box_spot.png".to_string(),
-        })
-        .with(GameBoxSpot {})
-        .build();
-}
-
-pub fn create_player(world: &mut World, position: Position) {
-    world
-        .create_entity()
-        .with(Position { z: 10, ..position })
-        .with(Renderable {
-            path: "/resources/images/player.png".to_string(),
-        })
-        .with(Player {})
-        .build();
-}
-
 // Initialize the level
 pub fn initialize_level(world: &mut World) {
-    create_player(
-        world,
-        Position {
-            x: 0,
-            y: 0,
-            z: 0, // we will get the z from the factory functions
-        },
-    );
-    create_wall(
-        world,
-        Position {
-            x: 1,
-            y: 0,
-            z: 0, // we will get the z from the factory functions
-        },
-    );
-    create_box(
-        world,
-        Position {
-            x: 2,
-            y: 0,
-            z: 0, // we will get the z from the factory functions
-        },
-    );
+    const MAP: &str = "
+    N N W W W W W W
+    W W W . . . . W
+    W . . . B . . W
+    W . . . . . . W
+    W . P . . . . W
+    W . . . . . . W
+    W . . S . . . W
+    W . . . . . . W
+    W W W W W W W W
+    ";
+
+    crate::map::load_map(world, MAP.to_string());
 }

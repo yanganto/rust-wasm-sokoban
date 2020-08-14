@@ -1,6 +1,9 @@
 use gwg::{conf::Conf, event, Context, GameResult};
 use specs::{RunNow, World, WorldExt};
 
+mod components;
+mod entities;
+mod map;
 mod render_sys;
 use render_sys::RenderingSystem;
 
@@ -28,7 +31,7 @@ struct Game {
 impl Game {
     fn new(_context: &mut Context) -> Self {
         let mut world = World::new();
-        render_sys::register_components(&mut world);
+        components::register_components(&mut world);
         render_sys::initialize_level(&mut world);
         Self { world }
     }
