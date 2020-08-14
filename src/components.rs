@@ -19,7 +19,7 @@ pub struct Renderable {
 #[storage(VecStorage)]
 pub struct Wall {}
 
-#[derive(Component)]
+#[derive(Debug, Component)]
 #[storage(VecStorage)]
 pub struct Player {}
 

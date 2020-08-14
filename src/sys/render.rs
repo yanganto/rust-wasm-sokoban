@@ -1,11 +1,12 @@
 use crate::components::{Position, Renderable};
+use crate::resources::Gameplay;
 use gwg::{
-    graphics::{self, DrawParam, Image},
+    graphics::{self, Color, DrawParam, Image},
     Context,
 };
 use nalgebra::Point2;
 use specs::{
-    join::Join, Builder, Component, ReadStorage, RunNow, System, VecStorage, World, WorldExt,
+    join::Join, Builder, Component, Read, ReadStorage, RunNow, System, VecStorage, World, WorldExt,
 };
 
 const TILE_WIDTH: f32 = 32.0;
@@ -18,10 +19,14 @@ pub struct RenderingSystem<'a> {
 // System implementation
 impl<'a> System<'a> for RenderingSystem<'a> {
     // Data
-    type SystemData = (ReadStorage<'a, Position>, ReadStorage<'a, Renderable>);
+    type SystemData = (
+        Read<'a, Gameplay>,
+        ReadStorage<'a, Position>,
+        ReadStorage<'a, Renderable>,
+    );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (positions, renderables) = data;
+        let (_game_play, positions, renderables) = data;
 
         // Clearing the screen (this gives us the backround colour)
         graphics::clear(self.context, graphics::Color::new(0.95, 0.95, 0.95, 1.0));
@@ -44,6 +49,11 @@ impl<'a> System<'a> for RenderingSystem<'a> {
             graphics::draw(self.context, &image, draw_params).expect("expected render");
         }
 
+        // TODO: handle text in wasm
+        // Render any text
+        // self.draw_text(&game_play.state.to_string(), 525.0, 80.0);
+        // self.draw_text(&game_play.moves_count.to_string(), 525.0, 100.0);
+
         // Finally, present the context, this will actually display everything
         // on the screen.
         graphics::present(self.context).expect("expected to present");
@@ -56,8 +66,8 @@ pub fn initialize_level(world: &mut World) {
     N N W W W W W W
     W W W . . . . W
     W . . . B . . W
-    W . . . . . . W
     W . P . . . . W
+    W W . W W W W W
     W . . . . . . W
     W . . S . . . W
     W . . . . . . W

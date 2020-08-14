@@ -6,11 +6,12 @@ web-build:
 	cargo build --target wasm32-unknown-unknown --release
 
 web: web-build
-	mv target/wasm32-unknown-unknown/release/rust-wasm-sokoban.wasm .
+	rm -rf rust-wasm-sokoban.wasm
+	cp target/wasm32-unknown-unknown/release/rust-wasm-sokoban.wasm .
 	python -m http.server
 
 desktop:
-	cargo run 
+	RUST_LOG=info cargo run 
 
 clean:
 	cargo clean
