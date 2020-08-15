@@ -4,11 +4,15 @@ use specs::{RunNow, World, WorldExt};
 mod components;
 mod constants;
 mod entities;
+mod logger;
 mod map;
 mod resources;
 mod sys;
 
+use logger::{debug, info, init_logger, trace, warn, Logger};
 use sys::{InputSystem, RenderingSystem};
+
+static LOGGER: Logger = Logger;
 
 #[cfg(not(target_arch = "wasm32"))]
 fn conf() -> Conf {
@@ -44,6 +48,7 @@ impl Game {
 impl event::EventHandler for Game {
     fn update(&mut self, context: &mut Context) -> GameResult {
         {
+            trace!("update game");
             let mut is = InputSystem {};
             //TODO: Hanle Input System in Wasm
             // is.run_now(&self.world);
@@ -81,17 +86,20 @@ impl event::EventHandler for Game {
         _: event::KeyMods,
         _: bool,
     ) {
-        log::info!("Key pressed: {:?}", key_code);
+        trace!("Key pressed: {:?}", key_code);
         let mut input_queue = self.world.write_resource::<resources::InputQueue>();
         input_queue.keys_pressed.push(key_code);
     }
 }
 
 fn main() -> gwg::GameResult {
-    // TODO: set log for wasm
-    env_logger::init();
+    #[cfg(not(target_arch = "wasm32"))]
+    init_logger(&LOGGER, &std::env::var("RUST_LOG").unwrap_or("all".into()));
+    #[cfg(target_arch = "wasm32")]
+    init_logger(&LOGGER, "all");
+
     gwg::start(conf(), |mut context| {
-        log::info!("Init good web game");
+        info!("Init good web game");
         let game = Game::new(&mut context);
         Box::new(game)
     })
